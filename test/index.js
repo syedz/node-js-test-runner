@@ -38,39 +38,41 @@ _app.runTests = function() {
     for (var key in _app.tests) {
         var subTests = _app.tests[key];
 
-        if (subTests.hasOwnProperty(testName)) {
-            // Create a closure to encapsulate the test variables within these loops to prevent them from overwritting each other
-            (function() {
-                var tmpTestName = testName;
-                var testValue = subTests[testName];
+        for (var testName in subTests) {
+            if (subTests.hasOwnProperty(testName)) {
+                // Create a closure to encapsulate the test variables within these loops to prevent them from overwritting each other
+                (function() {
+                    var tmpTestName = testName;
+                    var testValue = subTests[testName];
 
-                // Call the test
-                try {
-                    testValue(function() {
-                        // If it calls back without throwing, then it succeed, so log it in green
-                        console.log('\x1b[32m%s\x1b[0m', tmpTestName);
+                    // Call the test
+                    try {
+                        testValue(function() {
+                            // If it calls back without throwing, then it succeed, so log it in green
+                            console.log('\x1b[32m%s\x1b[0m', tmpTestName);
+                            counter++;
+                            successes++;
+
+                            if (counter == limit) {
+                                _app.produceTestReport(limit, successes, errors);
+                            }
+                        });
+                    } catch (error) {
+                        // If it throws, then it failed, so capture the error thrown and log it in red
+                        errors.push({
+                            name: testName,
+                            error: error
+                        });
+
+                        console.log('\x1b[31m%s\x1b[0m', tmpTestName);
                         counter++;
-                        successes++;
 
                         if (counter == limit) {
                             _app.produceTestReport(limit, successes, errors);
                         }
-                    });
-                } catch (error) {
-                    // If it throws, then it failed, so capture the error thrown and log it in red
-                    errors.push({
-                        name: testName,
-                        error: e
-                    });
-
-                    console.log('\x1b[31m%s\x1b[0m', tmpTestName);
-                    counter++;
-
-                    if (counter == limit) {
-                        _app.produceTestReport(limit, successes, errors);
                     }
-                }
-            })();
+                })();
+            }
         }
     }
 };
