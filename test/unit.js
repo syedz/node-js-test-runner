@@ -24,4 +24,18 @@ unit['_sampleFunctions.subtractTwoNumbers should subtract the second arg from th
     done();
 };
 
+unit['_sampleFunctions.subtractTwoNumbers should failed'] = function(done) {
+    var difference = _sampleFunctions.subtractTwoNumbers(4, 3);
+    assert.equal(difference, 10);
+
+    done();
+};
+
+unit['_sampleFunctions.errorThrowingFunction should not throw an error'] = function() {
+    assert.doesNotThrow(function() {
+        _sampleFunctions.errorThrowingFunction();
+        done();
+    }, TypeError);
+};
+
 module.exports = unit;
